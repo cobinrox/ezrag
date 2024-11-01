@@ -6,14 +6,50 @@ import threading
 import inspect
 import pprint
 from types import ModuleType
+import csv
 
 # re-usable global for setting a start time, useful
 # for debugging
 g_start_time = 0
 
+def remove_cr_lf(text: str) -> str:
+  return text.replace('\r', '').replace('\n', '')
+
+def save_csv(header, csvStr, fileName):
+    directory = os.path.dirname(fileName)
+    abs_dir_name = os.path.abspath(directory)
+    if not os.path.exists(abs_dir_name):
+        print(f"Created dir [{abs_dir_name}]")
+        os.makedirs(abs_dir_name)
+
+    with open(fileName, 'a+') as f:
+        # Check if the file is empty (i.e., no header)
+        f.seek(0, 2)  # Move the file pointer to the end
+        if f.tell() == 0:
+            # Prepend "TIME_MS" to the header
+            f.write(f"TIME_MS,{header}\n")
+
+        current_time_ms = int(round(time.time() * 1000))
+        row_data = f"{current_time_ms},{csvStr}\n"  # Prepend timestamp to row data
+        f.write(row_data)
+
 def to_absolute_path(path_str):
     # Convert the input string to an absolute path
     return os.path.abspath(path_str)
+
+def dec_pts(val, n):
+  """
+  Truncates a number to a specified number of decimal points.
+
+  Args:
+    val: The number to truncate.
+    n: The number of decimal points to retain.
+
+  Returns:
+    The truncated number as a string.
+  """
+  return f"{val:.{n}f}"
+
 
 def print_start_msg(msg) :
   global g_start_time

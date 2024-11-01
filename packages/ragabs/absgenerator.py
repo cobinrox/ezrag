@@ -11,7 +11,10 @@ from utils import utils
 
 class AbsGenerator(ABC):
 
-
+    def setSessionName(self, session_name):
+        self.session_name = session_name
+    def setDebug(self, debug):
+        self.debug = debug        
 
     @abstractmethod
     def generate_response(self, query: str, context: list) -> str:

@@ -2,6 +2,7 @@ import argparse
 import os
 import subprocess
 import sys
+import time
 from packages.utils import utils
 from packages.ragimpls.faissretriever import Naive_ST_FAISS_Retriever
 #from packages.ragimpls.whooshretriever import WhooshRetriever
@@ -20,7 +21,7 @@ def parse_my_args():
     parser.add_argument("--generator_name",  default="TinyLLmGenerator"        , help="GX name")
     parser.add_argument("--docs_dir"      ,  default="./docs/geography"                 , help="Documents directory")
     parser.add_argument("--chunk_size"    ,  type=int,default="512"            , help="Nominal chunking size")
-
+    parser.add_argument("--chunk_dist_scoring", default="EUCLIDIAN"       , help="Type of rag/distance scoring within vector search engine")
     #parser.add_argument("--quantize"      ,  action="store_true"               , help="Whether to quantize")#default="true"                       )
     #parser.add_argument("--num_loops",     type=int,default="1",        help="Number of times to run query")
     #parser.add_argument("--debug"         ,  action="store_true"               , help="Use debugg")
@@ -35,11 +36,13 @@ def parse_my_args():
     # Convert comma-separated ids to a list of integers
     #g_args.ids = [int(id) for id in g_args.ids.split(',')]
     utils.printf("===== Main input parameters: =====")
-    utils.printf(f"Retreiver name : [{g_args.retreiver_name}]"    )#+str(type(args.retreiver_name)))
-    utils.printf(f"Generator name : [{g_args.generator_name}]"    )#+str(type(args.generator_name)))
-    utils.printf(f"Documents dir  : [{g_args.docs_dir}]"    )#+str(type(args.docs_dir)))
+    utils.printf(f"Retreiver name : [{g_args.retreiver_name}]"    )
+    utils.printf(f"Generator name : [{g_args.generator_name}]"    )
+    utils.printf(f"Dist. Scoring  : [{g_args.chunk_dist_scoring}]")
 
-    utils.printf(f"Chunk size     : [{g_args.chunk_size}]" )#+ str(type(args.chunk_size)))
+    utils.printf(f"Documents dir  : [{g_args.docs_dir}]"    )
+
+    utils.printf(f"Chunk size     : [{g_args.chunk_size}]" )
     utils.printf(f"Quantize       : [{g_args.quantize}]")
     #utils.printf(f"Num Loops  : [{args.num_loops}]")
 
@@ -55,6 +58,9 @@ def parse_my_args():
 if __name__ == "__main__":
     #global g_args
     parse_my_args()
+    # dumb, just to help with debugging/output of csv files
+    sessionNumber = int(round(time.time() * 1000))
+
     # Your main program code here
     # The question we want to ask
     thequestion = "What is PJ's wife's name and what kind of animal was she?"
@@ -63,17 +69,22 @@ if __name__ == "__main__":
         utils.printf(f"Cannot find docs_dir [{docs_dir}], will not be using docs in the RAG search")
 
     # Initialize the retriever, passing its parameters
-    retriever = Naive_ST_FAISS_Retriever(docs_dir=docs_dir,chunk_size=512,flush=True)
+    retriever = Naive_ST_FAISS_Retriever(docs_dir=docs_dir,chunk_size=512,search_engine_distance_type=g_args.chunk_dist_scoring, flush=True)
+    retriever.setSessionName(sessionNumber)
+    retriever.setDebug(g_args.debug)
     #retriever = WhooshRetriever(docs_dir=docs_directory,chunk_size=0,flush=True)
+    
     generator = TinyLLmGenerator()
+    generator.setSessionName(sessionNumber)
+    generator.setDebug(g_args.debug)
 
        # Query
     top_doc_names,top_chunks = retriever.public_retrieve_documents(thequestion, top_k=5)
 
     #print("Top retrieved documents:", top_doc_names)
     #print("Top chunks :", top_chunks)
-
-    x = generator.generate_response(thequestion,top_chunks)
+    angryQuestion = "Answer this question but do not hallucinate, if you know the answer, cite which chunk you got the information from.  Here is teh qeustion: " + thequestion
+    x = generator.generate_response(angryQuestion,top_chunks)
     utils.printf("Question: " + thequestion)
     utils.printf("Answer:")
     utils.printf(x)

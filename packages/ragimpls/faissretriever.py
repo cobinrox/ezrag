@@ -7,7 +7,12 @@ sys.path.append(parent_dir)
 #from packages.utils.utils import utils
 from utils import utils
 from utils import safeprint
+from ragabs.abschunker import AbsChunker
+from ragimpls.naievechunker import Naive_Chunker
 
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 utils.check_venv()
 
@@ -21,6 +26,7 @@ import numpy as np
 import torch
 
 from ragabs.absretriever import AbsRetriever
+from packages.ragimpls.faisscosine import Faiss_Cosine
 
 # nasty syntax to allow vscode to run this file in python debugger
 #sys.path.append('../utils')
@@ -33,12 +39,18 @@ from ragabs.absretriever import AbsRetriever
 class Naive_ST_FAISS_Retriever(AbsRetriever):
     #def __init__(self, index_dir: str, docs_dir: str, flush=True):
     def __init__(self, embedding_model_name: str = 'all-MiniLM-L6-v2',  docs_dir: str = 'documents',  chunk_size=512, 
-                 persistent_embeddings_path: str = 'faiss_index', flush=True):
+                 search_engine_distance_type = AbsRetriever.EUCLIDIAN_DISTANCE, persistent_embeddings_path: str = 'faiss_index', flush=True):
         utils.print_start_msg("Initialize ...")
-        self.type_chunking_engine         = "naive"
-        self.type_embedding_engine  = f"ST/{embedding_model_name}"
-        self.type_vector_engine = "faiss"
-        self.search_engine_distance_type = AbsRetriever.EUCLIDIAN_DISTANCE
+        if os.path.exists(docs_dir):
+           self.docs_dir = docs_dir  # Directory containing documents
+        else:
+            utils.printf(f"Warning doc dir [{docs_dir}] not found.")
+            self.docs_dir = None
+        self.type_chunking_engine        = "naive"
+        self.type_embedding_engine       = f"ST/{embedding_model_name}"
+        self.type_vector_engine          = "faiss"
+        self.search_engine_distance_type = search_engine_distance_type #AbsRetriever.EUCLIDIAN_DISTANCE
+        self.chunking_engine             = Naive_Chunker("naive",self.docs_dir,chunk_size)
 
         self.flush     = flush
         utils.print_start_msg("importing SentenceTransformer")
@@ -46,25 +58,24 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
         utils.print_stop_msg("imported Sentencetransformer")
         self.embedding_engine_model = SentenceTransformer(embedding_model_name)
         #self._quantize(self.model)
-        if os.path.exists(docs_dir):
-           self.docs_dir = docs_dir  # Directory containing documents
-        else:
-            utils.printf(f"Warning doc dir [{docs_dir}] not found.")
-            self.docs_dir = None
         self.vector_engine = None
         self.persistent_embeddings_path = persistent_embeddings_path  # Path to store/load the FAISS index
 
-        self.doc_chunks = []  # Store document text
-        self.doc_chunks_names = []  # Store document names for retrieval
-        self.doc_chunks_dicts = [] # to replace stupid arrays
-        self.embeddings = None
+        self.chunks = []  # Store document text
+        self.chunks_names = []  # Store document names for retrieval
+        self.chunks_dicts = [] # to replace stupid arrays
+        self.initial_chunk_embeddings = None
         self.chunk_size = chunk_size  # Size of each chunk when initially loading docs
 
         # check if persisted vectors already exist and flush if desired
         if( self.flush):
             self._flush(self.persistent_embeddings_path)
+        
+        self.stats_file = "STATS/rag_search_stats.csv"
         utils.print_stop_msg("...initialize")
 
+    def injectChunker():
+        pass
     #def retrieve(self, query:str):
     #    self._create_doc_embeddings()
     #    #top_doc_names,top_chunks = retriever.public_retrieve_documents(query, top_k=5)
@@ -116,36 +127,36 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
           return os.path.exists(self.persistent_embeddings_path)
 
     def _create_doc_embeddings(self):
-        """
-        Create a Faiss index for the loaded documents by embedding them into vectors.
-        """
         # Load documents from directory
         self._load_n_chunk_docs()
 
-        if len(self.doc_chunks_dicts) == 0:
+        if len(self.chunks_dicts) == 0:
             print("FYI- No documents to index.")
             
 
         # Convert the document chunks to embeddings
         utils.print_start_msg(f"embedding/encoding chunks via [{self.type_embedding_engine}]...")
-        safeprint.safe_print_obj(self.embedding_engine_model,"embedder engine")
-        embeddings = self.embedding_engine_model.encode(self.doc_chunks, show_progress_bar=False)
+        #safeprint.safe_print_obj(self.embedding_engine_model,"embedder engine")
+        embeddings = self.embedding_engine_model.encode(self.chunks, show_progress_bar=False)
         utils.print_stop_msg(f"...embedding/encoding chunks via [{self.type_embedding_engine}]")
-        
-        # Create a Faiss index (L2 Euclidian distance)
+        #safeprint.safe_print_obj(embeddings,"embeddings")
+
+        # Create a Faiss searcher
         utils.print_start_msg(f"creating embedding store via [{self.type_vector_engine}]...")
-        if(self.search_engine_distance_type == "EUCLIDIAN"):
+        if(self.search_engine_distance_type == AbsRetriever.EUCLIDIAN_DISTANCE):
             self.vector_engine = faiss.IndexFlatL2(embeddings.shape[1])
-        elif self.search_engine_distance_type == "DOT_PRODUCT":
+        elif self.search_engine_distance_type == AbsRetriever.DOT_PRODUCT_DISTANCE:
             self.vector_engine = faiss.IndexFlatIP(embeddings.shape[1])
+        elif self.search_engine_distance_type == AbsRetriever.COSINE_DISTANCE:
+            self.vector_engine = Faiss_Cosine(embeddings.shape[1])
         utils.print_stop_msg(f"...creating embedding store via [{self.type_vector_engine}]")
         
-        # Add the embeddings to the Faiss index
+        # Add the embeddings to the search db
         utils.print_start_msg(f"adding embeddings to embedding store [{self.type_vector_engine}]...")
         self.vector_engine.add(embeddings)
         utils.print_stop_msg(f"...adding embeddings to embedding store [{self.type_vector_engine}]")
-        self.embeddings = embeddings
-        # Persist the index to disk
+        self.initial_chunk_embeddings = embeddings
+        # Persist the embeddings to disk
         utils.print_start_msg(f"saving embeddings to disk as file [{self.persistent_embeddings_path}] for [{self.type_vector_engine}]...")
         faiss.write_index(self.vector_engine, self.persistent_embeddings_path)
         utils.print_stop_msg(f"...saving embeddings to disk for [{self.type_vector_engine}]")
@@ -156,7 +167,7 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
             utils.print_start_msg(f"reading persisted embedding from [{self.persistent_embeddings_path}] for [{self.type_vector_engine}]...")
             self.vector_engine = faiss.read_index(self.persistent_embeddings_path)
             utils.print_stop_msg(f"...reading fais persisted embedding for [{self.type_vector_engine}]")
-            self.embeddings = self.vector_engine.get_xb()  # get_xb() returns the stored vectors as a numpy array
+            self.initial_chunk_embeddings = self.vector_engine.get_xb()  # get_xb() returns the stored vectors as a numpy array
 
         else:
             print(f"Programming error -- No previously persisted embeddings file found at {self.persistent_embeddings_path} for [{self.type_vector_engine}]. Please create the embeddings first.")
@@ -180,11 +191,14 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
         # Split the text into chunks of self.chunk_size characters
         return [text[i:i + self.chunk_size] for i in range(0, len(text), self.chunk_size)]
     
+    # create list of chunks as dictionary lookup of chunks
+    # and corresponding list of actual chunks
     def _load_n_chunk_docs(self):
         """
         Load and process all documents (PDF and TXT) from the docs directory.
         """
         fileCount = 0
+        total_chunk_idx = 0
         utils.print_start_msg(f"loading and chunking docs via [{self.type_chunking_engine}]...")
         for filename in os.listdir(self.docs_dir):
             fileCount = fileCount + 1
@@ -208,22 +222,39 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
             
             # Store the document chunks and their corresponding names
             # append the chunks of this doc to the total chunks list
-            self.doc_chunks.extend(local_chunks)
+            self.chunks.extend(local_chunks)
             # For each chunk, we append the original document name (you can also add chunk numbers)
-            self.doc_chunks_names.extend([filename] * len(local_chunks))
+            #self.chunks_names.extend([filename] * len(local_chunks))
+            local_chunk_offset_in_this_file = 0
+            # a name to assign to the chunk for help in debugging
+            # idx-- the numerical (0..n) piece of the chunk of all of our chunks we're collecting across all files
+            #       and which is located within the chunks array
+            # value of the chunk
+            # a shortened text representation of the text in the chunk
+            # length of the chunk
+            # the file name where the chunk came from
+            # the offset within the file where the chunk came from
+
             for a_local_chunk in local_chunks:
-                self.doc_chunks_dicts.append( 
-                    {"name"          : f"chunk_{len(self.doc_chunks_dicts)}",
-                    "value"          : a_local_chunk,
-                    "filename"       : filename,
+                self.chunks_dicts.append( 
+                    {"name"          : f"chunk_{total_chunk_idx}", #f"chunk_{len(self.chunks_dicts)}",
+                     "idx"           : total_chunk_idx, # len(self.chunks_dicts),
+                     #"value"         : a_local_chunk,
+                     "summary"       : self.chunking_engine.first_x_last_x_chars(a_local_chunk,3),
+                     "len"           : len(a_local_chunk),
+                     "filename"      : filename,
+                     "offsetInFile"  : local_chunk_offset_in_this_file,
                      "time"          : "whatever",
-                     "someotherInfo:": "whaeverelse" }
+                     "someotherInfo:": "whaeverelse",
+                     "score"         : -1 }
                 )
-            #safeprint.safe_print_obj(self.doc_chunks)
-            #safeprint.safe_print_obj(self.doc_chunks_names)
+                local_chunk_offset_in_this_file = local_chunk_offset_in_this_file + len(a_local_chunk)
+                total_chunk_idx = total_chunk_idx+1
+            #safeprint.safe_print_obj(self.chunks)
+            #safeprint.safe_print_obj(self.chunks_names)
             breakoint = 1
-        utils.print_stop_msg(f"...loading docs via [{self.type_chunking_engine}], created [{len(self.doc_chunks_dicts)}] total chunks from [{fileCount}] files")
-        safeprint.safe_print_obj(self.doc_chunks_dicts,"chunks as a dict")
+        utils.print_stop_msg(f"...loading docs via [{self.type_chunking_engine}], created [{len(self.chunks_dicts)}] total chunks from [{fileCount}] files")
+        #safeprint.safe_print_obj(self.chunks_dicts,"chunks as a dict")
 
 
 
@@ -245,27 +276,55 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
             utils.print_stop_msg("...querying embeddings")
             
             # Return the top_k document filenames
-            #top_doc_names   =  [self.doc_chunks_names[i] for i in indices[0]]
+            #top_doc_names   =  [self.chunks_names[i] for i in indices[0]]
             
             start = 0
             stop = len(indices[0])
             for step in range(start, stop):
                 i = indices[0][step]
-                doc_name = self.doc_chunks_names[i]
+                #doc_name = self.chunks_names[i]
+                doc_name = self.chunks_dicts[i]["filename"]
+                first_x_last_x_chars = 0
                 top_doc_names.append(doc_name)
-                distance = distances[0][step]
-                
-                print(f"Resulting chunk {step + 1}/{stop}:")
-                print(f"  Index: {i}")
-                print(f"  Document name: {doc_name}")
-                print(f"  Distance: {distance}")
-                print(f"  Current top_doc_names: {top_doc_names}")
+                distance = utils.dec_pts(distances[0][step],2)
+                chunk_summary        = self.chunks_dicts[i]["summary"]#self.chunking_engine.first_x_last_x_chars(self.chunks[i],5)
+                chunk_data_len       = self.chunks_dicts[i]["len"]#len(self.chunks[i])
+                chunk_offset_in_file = self.chunks_dicts[i]["offsetInFile"]
+                print(f"Relevant chunk {step + 1}/{stop}:")
+                print(f"  Index:         {i}")
+                print(f"  Chunk score:   {distance}")
+                print(f"  Chunk source:  {doc_name}")
+                print(f"  LocationInFile:{chunk_offset_in_file}")
+                #print(f"  Current top_doc_names: {top_doc_names}")
+                print(f"  Chunk summary: {chunk_summary}")
+                if(self.debug):
+                    print(f"  Chunk:         {utils.remove_cr_lf(self.chunks[i])}")
                 print()       
-            
-            top_chunks = [self.doc_chunks[i] for i in indices[0]]
+                csvStr = f"{self.session_name},{self.type_vector_engine},{self.search_engine_distance_type},{distance},{chunk_data_len},{doc_name},{chunk_offset_in_file}"
+                utils.save_csv(AbsRetriever.STATS_SEARCH_HEADER,csvStr,self.stats_file)
+            top_chunks = [self.chunks[i] for i in indices[0]]
 
-            #return [self.doc_chunks_names[i] for i in indices[0]]
-        return top_doc_names,top_chunks
+            reranked_chunks = reretrieve(query_embedding,self.initial_chunk_embeddings,top_chunks)
+            #return [self.chunks_names[i] for i in indices[0]]
+        #return top_doc_names,top_chunks
+        return top_doc_names,reranked_chunks
+
+
+def reretrieve(query_embedding, original_embeddings, original_top_chunks, top_k=5):
+     # Calculate cosine similarity between the query embedding and each retrieved chunk embedding
+    similarity_scores = cosine_similarity(query_embedding, np.array(original_embeddings))[0]
+
+    # Pair each chunk with its similarity score
+    scored_chunks = list(zip(similarity_scores, original_top_chunks))
+
+    # Sort the chunks by similarity scores in descending order
+    reranked_chunks = sorted(scored_chunks, key=lambda x: x[0], reverse=True)[:top_k]
+
+    # Unpack the chunks and their similarity scores
+    final_chunks = [chunk for _, chunk in reranked_chunks]
+    final_similarities = [score for score, _ in reranked_chunks]
+
+    return final_chunks, final_similarities
 
 # Example usage
 

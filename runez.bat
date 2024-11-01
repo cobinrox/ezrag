@@ -4,6 +4,7 @@ setlocal EnableDelayedExpansion
 REM Define default values for each option
 set retreiver_name=Naive_ST_FAISS_Retriever
 set generator_name=TinyLLmGenerator
+set chunk_dist_scoring=EUCLIDIAN
 set quantize=True
 set debug=True
 set docs_dir=docs/geography
@@ -11,6 +12,7 @@ set docs_dir=docs/geography
 REM Define possible values for each option
 set retreiver_name_choices=Naive_ST_FAISS_Retriever giraffe ostritch
 set generator_name_choices=TinyLLmGenerator TinyLLmGenerator beer wine
+set chunk_dist_scoring_choices=EUCLIDIAN DOT_PRODUCT COSINE
 set docs_dir_choices=docs/airrag_docs docs/email docs/geography docs/reports docs/wrk NONE
 set quantize_choices=True False
 set debug_choices=True False
@@ -25,9 +27,10 @@ echo.
 REM Display options with alignment
 call :display_option 1 retreiver_name " " !retreiver_name! "  "  "[Naive_ST_FAISS_Retriever,giraffe,ostritch]"
 call :display_option 2 generator_name " " !generator_name! "  " "[TinyLLmGenerator, TinyLLmGenerator, beer, wine]"
-call :display_option 3 docs_dir "       " !docs_dir! "  "       "[docs/airrag_docs, docs/email, docs/geography, docs/reports, docs/wrk, NONE]"
-call :display_option 4 quantize "       " !quantize! "  "       "[True, False]"
-call :display_option 5 debug "          " !debug! "  "          "[True, False]"
+call :display_option 3 chunk_dist_scoring " " !chunk_dist_scoring! "  " "[EUCLIDIAN, DOT_PRODUCT,COSINE]"
+call :display_option 4 docs_dir "       " !docs_dir! "  "       "[docs/airrag_docs, docs/email, docs/geography, docs/reports, docs/wrk, NONE]"
+call :display_option 5 quantize "       " !quantize! "  "       "[True, False]"
+call :display_option 6 debug "          " !debug! "  "          "[True, False]"
 echo.
 echo R RUN!
 echo Q QUIT
@@ -40,9 +43,10 @@ if /i "%choice%"=="Q" goto end
 if /i "%choice%"=="R" goto run_script
 if "%choice%"=="1" call :rotate_option retreiver_name retreiver_name_choices
 if "%choice%"=="2" call :rotate_option generator_name generator_name_choices
-if "%choice%"=="3" call :rotate_option docs_dir docs_dir_choices
-if "%choice%"=="4" call :rotate_option quantize quantize_choices
-if "%choice%"=="5" call :rotate_option debug debug_choices
+if "%choice%"=="3" call :rotate_option chunk_dist_scoring chunk_dist_scoring_choices
+if "%choice%"=="4" call :rotate_option docs_dir docs_dir_choices
+if "%choice%"=="5" call :rotate_option quantize quantize_choices
+if "%choice%"=="6" call :rotate_option debug debug_choices
 
 REM Return to menu after each selection
 goto menu
@@ -111,7 +115,7 @@ goto :eof
 :run_script
 REM Run Python script with selected options as arguments
 echo Running Python script with the selected options:
-set args=--retreiver_name=%retreiver_name% --generator_name=%generator_name% --quantize=%quantize% --debug=%debug% --docs_dir=%docs_dir%
+set args=--retreiver_name=%retreiver_name% --generator_name=%generator_name% --chunk_dist_scoring=%chunk_dist_scoring% --quantize=%quantize% --debug=%debug% --docs_dir=%docs_dir%
 echo python main_ai.py %args%
 python main_ai.py %args%
 goto end
