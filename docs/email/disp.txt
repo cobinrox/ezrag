@@ -1,0 +1,162 @@
+====================================================================
+
+From: Kayla Haley [AUS]
+Sent: Wednesday, October 23, 2024 4:13 PM
+To: Glen Hees <glen.hees@bluestaq.com>; Nathan Wuest <nathan.wuest@bluestaq.com>
+Cc: Keith Anderson <keith.anderson@bluestaq.au>
+Subject: FW: [External]RE: [External]RE: DISP Membership [SEC=OFFICIAL]
+
+ 
+
+Hi Glen,
+
+Can you give some hours to Cyber to review these documents and provide feedback on where we are already in compliance, any gaps, and estimated hours and timeframe to meet full compliance requirements 
+
+This is separate to the current RFT we are working on and will be a requirement for any future contract with Defence, including a sustainment contract on the AUS UDL.
+
+At first glance it looks like a good portion of this is covered in the Bluestaq SSP. 
+
+Thanks,
+
+Kayla
+
+===============================================================
+
+From: Murray, Alan FSGT 2 <alan.murray2@defence.gov.au>
+Sent: Wednesday, October 23, 2024 3:02 PM
+To: Kayla Haley [AUS] <kayla.haley@bluestaq.com>
+Subject: [External]RE: [External]RE: DISP Membership [SEC=OFFICIAL]
+
+ 
+
+OFFICIAL
+
+Hi Kayla,
+
+                I received advice that the documents can be shared as we have a contract with Bluestaq and the Cyber security requirements will/can apply retrospective however there is no intent for you to comply with them for the remainder of this contract.   See the attached documents that will be required to meet the new Cyber accreditation requirements for Defence.  If you can let me know if you have any of these in place already that would be great and if not, how long would it take to have them in place that would be appreciated.
+
+Regards
+
+Al Murray
+FSGT/ PRJ MGR
+
+Directorate | Space Capability Branch
+
+Joint Capabilities Division
+
+Lot 14,] | Bice Building | Adelaide| SA 5000
+
+(  +61 8737 413 40
+
+alan.murray2@defence.gov.au
+====================================================================
+
+From: Murray, Alan FSGT 2
+Sent: Thursday, 17 October 2024 7:23 AM
+To: 'Kayla Haley [AUS]' <kayla.haley@bluestaq.com>
+Subject: RE: [External]RE: DISP Membership [SEC=OFFICIAL]
+
+OFFICIAL
+
+Hi Kayla,
+
+                Legally I can’t supply the documents at the moment as I don’t have authorisation of a commitment of funds, once I have that in place I can release the documents.  I am sure WGCDR Gell would have informed you funding is very tight at the moment and they are looking at what priorities vs savings they can make, so it might be a while before I know if we can proceed.
+
+Al
+
+=====================================================================
+
+From: Kayla Haley [AUS] <kayla.haley@bluestaq.com>
+Sent: Wednesday, 16 October 2024 3:51 PM
+To: Murray, Alan FSGT 2 <alan.murray2@defence.gov.au>
+Subject: RE: [External]RE: DISP Membership [SEC=OFFICIAL]
+
+Hi Alan,
+
+This review was not part of the DISP membership uplift. Would it be possible to get a list of the full requirements for us to review against and identify any gaps? I believe we already have a good portion of this inplace.
+
+In the last touch point, Sean indicated compliance would be a requirement for any future work, but is could be achieved under contract and within a set timeframe.  Is this still the case?
+
+Kind regards,
+
+Kayla
+
+=====================================================================
+
+From: Murray, Alan FSGT 2 <alan.murray2@defence.gov.au>
+Sent: Wednesday, October 16, 2024 2:24 PM
+To: Kayla Haley [AUS] <kayla.haley@bluestaq.com>
+Subject: [External]RE: DISP Membership [SEC=OFFICIAL]
+
+Hi Kayla,
+
+                was the cyber assessment part of the DISP membership uplift as there is a new separate cyber assessment requirement that is more detailed and separate to the DISP membership that has only recently came out after an government ANAO audit, looking at the requirements yesterday it is quite involved.  It requires the following:
+
+ 
+
+Security Authorisation plan
+System Security Plan
+Cloud Controls Matrix Template
+Security Risk Management plan
+Continuous Monitoring Plan
+Incident Response Plan
+Standing Operating Procedures
+E8 Maturity (I don’t even know what that is)
+The documents are then reviewed by an assessor on site for compliance, we are looking into it more but it does appear it applies to any system that interfaces with Defence systems, I believe you will also require access to a DPE terminal at you facility.
+
+Regards
+
+Al Murray
+FSGT/ PRJ MGR
+
+Directorate | Space Capability Branch
+
+Joint Capabilities Division
+
+Lot 14,] | Bice Building | Adelaide| SA 5000
+
+(  +61 8737 413 40
+
+alan.murray2@defence.gov.au
+=================================================================
+
+From: Kayla Haley [AUS] <kayla.haley@bluestaq.com>
+Sent: Tuesday, 15 October 2024 4:58 PM
+To: Murray, Alan FSGT 2 <alan.murray2@defence.gov.au>
+Subject: RE: DISP Membership [SEC=OFFICIAL]
+
+Hi Alan,
+
+Yes, we have applied, but we have not received the membership yet.  We initially applied for Entry Level for all four categories and are now applying for an uplift to Level 3 for Personnel Security and Governance.
+
+The Cyber assessment component has been completed. I have an email from the Cyber Team stating, “they are satisfied that your organisation has reached an acceptable level of cyber security hygiene” and the associated assessment report.  I can provide either/both of these should they be of any value.
+
+Kind regards,
+
+Kayla
+
+=======================================================================
+
+From: Murray, Alan FSGT 2 <alan.murray2@defence.gov.au>
+Sent: Tuesday, October 15, 2024 8:09 AM
+To: Kayla Haley [AUS] <kayla.haley@bluestaq.com>
+Subject: DISP Membership [SEC=OFFICIAL]
+
+Hi Kayla,
+
+                There are some new requirements surrounding Cyber accreditation with contracts, can you advise if you have applied for DISP membership or have DISP membership and if so at what level.
+
+Regards
+
+Al Murray
+FSGT/ PRJ MGR
+
+Directorate | Space Capability Branch
+
+Joint Capabilities Division
+
+Lot 14,] | Bice Building | Adelaide| SA 5000
+
+(  +61 8737 413 40
+
+alan.murray2@defence.gov.au
