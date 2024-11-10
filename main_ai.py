@@ -7,9 +7,9 @@ from packages.utils import remenu
 from packages.ragimpls.faissretriever  import Naive_ST_FAISS_Retriever
 from packages.ragimpls.simpleretriever import SimpleRetriever
 #from packages.ragimpls.whooshretriever import WhooshRetriever
-from packages.ragimpls.tinyllmgenerator        import TinyLLmGenerator
-from packages.ragimpls.t5smallgenerator        import T5SmallGenerator
-from packages.ragimpls.t5smallgenerator        import T5BaseGenerator
+from packages.ragimpls.tinyllmgenerator import TinyLLmGenerator
+from packages.ragimpls.t5smallgenerator import T5SmallGenerator
+from packages.ragimpls.t5basegenerator  import T5BaseGenerator
 
 from packages.ragimpls.simplechunker  import Simple_Chunker
 from packages.ragabs.session          import Session
