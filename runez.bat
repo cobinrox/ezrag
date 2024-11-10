@@ -14,7 +14,7 @@ set debug=True
 set docs_dir=docs/security
 
 REM Define possible values for each option
-set retriever_name_choices=Naive_ST_FAISS_Retriever WhooshRetriever
+set retriever_name_choices=Naive_ST_FAISS_Retriever SimpleRetriever
 set generator_name_choices=T5SmallGenerator TinyLLmGenerator
 set chunker_name_choices=Simple_Chunker
 set chunk_max_num_choices=1 5 6 7 10
@@ -36,7 +36,7 @@ echo Select an option to rotate its values, "R" to run, or "X" to exit.
 echo.
 
 REM Display options with alignment
-call :display_option 1  retriever_name "     " !retriever_name! "  "  "[Naive_ST_FAISS_Retriever WhooshRetriever]"
+call :display_option 1  retriever_name "     " !retriever_name! "  "  "[Naive_ST_FAISS_Retriever SimpleRetriever]"
 call :display_option 2  generator_name "     " !generator_name! "  " "[T5SmallGenerator TinyLLmGenerator]"
 call :display_option 3  chunker_name "       " !chunker_name! "  " "[Simple_Chunker]"
 call :display_option 4  chunk_max_num "      " !chunk_max_num! "  " "[1 5 6 7 10]"

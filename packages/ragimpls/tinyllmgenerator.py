@@ -13,7 +13,9 @@ from utils import safeprint
 from ragabs.session import Session
 from ragabs.absgenerator import AbsGenerator
 
-
+'''
+     Generator that uses the T5-base encoder/decoder LLM.
+'''
 class TinyLLmGenerator(AbsGenerator):
     model_name = 'TinyLlama/TinyLlama-1.1B-Chat-v1.0'
     def __init__(self, session):

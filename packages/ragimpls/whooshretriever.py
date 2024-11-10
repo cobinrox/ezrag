@@ -17,7 +17,9 @@ from utils import utils
 
 utils.printf('woot')
 
-# Implement the Retriever using Whoosh
+'''
+NOT READY FOR USE, DO NOT USE
+'''
 class WhooshRetriever(AbsRetriever):
     def __init__(self, session):
         super().__init__(session)

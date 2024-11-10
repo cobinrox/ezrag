@@ -154,7 +154,7 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
             top_chunk_objs = [self.chunker.chunk_objs[i] for i in indices[0]]
 
             # do a re-retrieval
-            reranked_chunks = self.reretrieveEm(query_embedding,top_chunk_objs)[0]
+            reranked_chunks = self._reretrieveEm(query_embedding,top_chunk_objs)[0]
 
             # save off the chunk info to csv
             for chunk_dict in top_chunk_objs:
@@ -202,7 +202,7 @@ class Naive_ST_FAISS_Retriever(AbsRetriever):
         Side effect: updates the top_chunk_objects with reretrieval score and resorts them based on re-retrieval
         scores
     '''
-    def reretrieveEm(self,query_embedding, top_chunk_objs):
+    def _reretrieveEm(self,query_embedding, top_chunk_objs):
         # Re-Calculate cosine similarity between the query embedding and each retrieved chunk embedding
         top_chunk_embeddings = []
         for a_chunk_obj in top_chunk_objs:

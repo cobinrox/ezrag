@@ -4,7 +4,8 @@ import sys
 import time
 from packages.utils import utils
 from packages.utils import remenu
-from packages.ragimpls.faissretriever import Naive_ST_FAISS_Retriever
+from packages.ragimpls.faissretriever  import Naive_ST_FAISS_Retriever
+from packages.ragimpls.simpleretriever import SimpleRetriever
 #from packages.ragimpls.whooshretriever import WhooshRetriever
 from packages.ragimpls.tinyllmgenerator        import TinyLLmGenerator
 from packages.ragimpls.t5smallgenerator        import T5SmallGenerator
@@ -35,7 +36,7 @@ def set_up_cmd_line_parser():
     g_parser = argparse.ArgumentParser(description="Options for the ezrag program")
     
     # Add arguments with default values
-    g_parser.add_argument("--retriever_name",  default="Naive_ST_FAISS_Retriever", help="Retriever class name to use (currently there [is only one -[Naive_ST_FAISS_Retriever])")
+    g_parser.add_argument("--retriever_name",  default="Naive_ST_FAISS_Retriever", help="Retriever class name to use (currently there [is only one -[Naive_ST_FAISS_Retriever,SimpleRetriever])")
     g_parser.add_argument("--generator_name",  default="TinyLLmGenerator"        , help="Generator class name to use (currently there are: [TinyLLmGenerator,T5SmallGenerator,T5BaseGenerator])")
     g_parser.add_argument("--chunker_name"  ,  default="Simple_Chunker"          , help="Chunker class name to use (currently there is [Simple_Chunker]) ")
     g_parser.add_argument("--docs_dir"      ,  default="docs/geography"          , help="Documents directory")
@@ -119,6 +120,8 @@ def run_session():
         retriever = Naive_ST_FAISS_Retriever(session)
     elif( g_args.retriever_name == "WhooshRetriever"):
         pass
+    elif( g_args.retriever_name == "SimpleRetriever"):
+        retriever = SimpleRetriever(session)
     
     generator = None
     if( g_args.generator_name == "TinyLLmGenerator"):

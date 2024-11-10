@@ -11,8 +11,10 @@ from ragabs.session import Session
 from utils import utils
 from utils import safeprint
 
-# Implement the Retriever using 
-# naive chunking      for chunking
+'''
+    Simple naieve chunker, just chunks up docs based on number of chars.
+    Only handles txt and pdf files.
+'''
 class Simple_Chunker(AbsChunker):
     def __init__(self, session):
         super().__init__(session)
@@ -68,7 +70,6 @@ class Simple_Chunker(AbsChunker):
                 total_chunk_idx = total_chunk_idx+1
             #safeprint.safe_print_obj(self.chunks)
             #safeprint.safe_print_obj(self.chunks_names)
-            breakoint = 1
         utils.print_stop_msg(f"...loading docs, created [{len(self.chunk_objs)}] total chunks from [{fileCount}] files")
         #safeprint.safe_print_obj(self.chunk_dicts,"chunks as a dict")
 
@@ -88,8 +89,20 @@ class Simple_Chunker(AbsChunker):
 
 if __name__ == "__main__":
     docs_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'docs/geography'))
+    session = Session()
+    session.ses_chunk_size     = 512
+    
+    # need to set this absolutely if running in debugger
+    my_script_directory = os.path.dirname(os.path.abspath(__file__))
+    relative_sec_path = "../../docs/geography"
+    abs_sec_path = os.path.abspath(os.path.join(my_script_directory, relative_sec_path))
+    if not os.path.exists(abs_sec_path):
+        utils.printf(f"CANNOT FIND  DOC DIR [{abs_sec_path}]")
+        sys.exit(-1)
+    session.ses_docs_dir = abs_sec_path
 
-    chunker = Simple_Chunker(docs_directory,512)
+    utils.printf(" LOOP 1")
+    chunker = Simple_Chunker(session)
     chunker.public_chunk_the_docs()
     the_chunk_objs = chunker.chunk_objs
     for a_chunk_obj in chunker.chunk_objs:

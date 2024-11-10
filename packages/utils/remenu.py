@@ -2,6 +2,12 @@ import sys
 import argparse
 from . import utils
 
+'''
+     Dump config items to menu, allow user to modify them.
+     @param old_args not used
+     @param oldparser parser previously set up for the program
+     @return array of new args that can be applied to another run of the program
+'''
 def run_menu(old_args,oldparser ):
     # get oldparser args
     #old_args = oldparser.parse_args(['--foo', 'value1', '--bar', 'value2'])
@@ -13,7 +19,7 @@ def run_menu(old_args,oldparser ):
     # Define available options for each variable and initialize current_index based on args
     variables = {
 
-        '1': {'name': 'retriever_name',     'options': ['Naive_ST_FAISS_Retriever','WhooshRetriever'], 'current_index': 0},
+        '1': {'name': 'retriever_name',     'options': ['Naive_ST_FAISS_Retriever','SimpleRetriever'], 'current_index': 0},
         '2': {'name': 'generator_name',     'options': ['T5SmallGenerator', 'TinyLLmGenerator'],       'current_index': 0},
         '3': {'name': 'chunker_name',       'options': ['Simple_Chunker'],                             'current_index': 0},
         '4': {'name': 'chunk_max_num',      'options': [1,5,6,7,10],                                   'current_index': 0},
@@ -91,6 +97,8 @@ def run_menu(old_args,oldparser ):
         else:
             print("Invalid choice. Please enter a valid variable key (e.g., '1', '2', '3'), 'r', or 'x'.")
     return question
+
+# example usage
 if __name__ == "__main__":
     # Create the parser
     myparser = argparse.ArgumentParser(description="Example parser")

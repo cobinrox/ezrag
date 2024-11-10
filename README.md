@@ -1,4 +1,4 @@
-# Ezrag
+# ezrag
 
 This is a python-based AI RAG research project.
 
@@ -56,22 +56,25 @@ The following files or directories are at your service
 ## Features
 The following are features of the program
 * Runs off line, but does require internet to download the project from Github and to download necessary AI models
-* Follows basic OO pattern with a Session, AbstractRetriever (AbsRetriever), AbstractChunker (AbsChunker), and AbstractGenerator (AbsGenerator) that can be swapped in and out at run time.
+* Follows basic OO pattern with a Session, AbstractRetriever (AbsRetriever), AbstractChunker (AbsChunker), and AbstractGenerator (AbsGenerator) that can be swapped in and out at run time.  It also includes a stupid-simple retriever that uses a stupid-simple string comparison as its search algorithm.  You can use this retriever to help understand (sort of) how RAG's work.
 * Starts up via the command line, but subsequent runs have interactive character-based menu that gets user input from stdin.
 * Optionally can be started from bat/sh script with a simple character-based menu that allows you to specify the parameters easily
-    
-* Currently the following modeles are supported for a retriever
-    * j
-    * j
-    * Retriever also runs a cosine re-retriever after initial retrieval
 
-* Currently the following models are supported for a Generator
-    * jj
-    * kkk
-
-* Currently the following algorithm is supported for a Chunker
+* Currently the following algorithm is implemented for a Chunker
     * simple chunking (every XYZ bytes)
-    * `hi`
+    * only support txt and pdf files (but you can use the tools/windows_doctopdf.py program to convert doc files to pdf)
+    
+* Currently the following algorithms are implemented for a retriever
+    * Faiss retriever; this uses the all-MiniLM-L6-v2 sentence transformer for embedding/encoding and uses the Faiss for the chunk comparison search.  This retriever also incorporates a re-retrieval after the initial search.
+    * Simple retriever; this uses a stupid-simple string comparison for the chunk comparison search 
+    
+* Currently the following algorithms are implemented for a generator
+    * T5-base
+    * T5-small
+    * Tiny-LLM
+    * The generator classes also attempt to minimize the input tokens to the llm if the llm in quesiton supports very few tokens.
+* You can mix and match the chunker, retriver, and generator classes as well as the arguments/configurations for them.
+
 
 * Log output includes timestamp, thread number, file from where the log file originated, current memory usage, example:
     * `[1731195850626] [MainThread] [1026.45 MB] [C\p\e\p\r\faissretriever.py]     ...embedding/encoding chunks took [46.920] secs`
@@ -117,7 +120,7 @@ The following are features of the program
 * Does not have support for CUDA
 * Not a true strategy pattern; right now you have to hard-code in the "main-ai.py" file the different chunker/retriever/generator classes that you want to use.
 * Kinda klunky to point to a document directory
-* Doesn't handle setting of model's directory outside of the repo (eh, it's saturday at 6PM, whad'ya want?)
+* Doesn't handle setting of model's directory, assumes default installation dir (eh, it's saturday at 6PM, whad'ya want?)
     
 
 ## Theory of Operation
@@ -304,7 +307,7 @@ Rate this answer from 1 (bad) to 5 (good): <<<<< WAITING FOR USER INPUT-- PROVID
 [1731259444855] [MainThread] [4701.73 MB] [C\p\e\main_ai.py]CSV files for this session/s can be found at: [./STATS]
 
 Current session settings:
-1 retriever_name  Naive_ST_FAISS_Retriever [Naive_ST_FAISS_Retriever, WhooshRetriever]
+1 retriever_name  Naive_ST_FAISS_Retriever [Naive_ST_FAISS_Retriever, SimpleRetriever]
 2 generator_name  TinyLLmGenerator     [T5SmallGenerator, TinyLLmGenerator]
 3 chunker_name    Simple_Chunker       [Simple_Chunker]
 4 chunk_max_num   5                    [1, 5, 6, 7, 10]

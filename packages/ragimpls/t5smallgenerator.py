@@ -13,7 +13,9 @@ from utils import safeprint
 from ragabs.absgenerator import AbsGenerator
 from ragabs.session import Session
 
-
+'''
+     Generator that uses the T5-smal encoder/decoder LLM.
+'''
 class T5SmallGenerator(AbsGenerator):
     model_name = 't5-small'
     def __init__(self, session):
