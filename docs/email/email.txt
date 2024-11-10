@@ -1,0 +1,172 @@
+Sure! Here’s the email thread with the dates changed to various days in 2019:
+
+---
+
+From: Adam Appleby  
+Sent: Wednesday, December 14, 2019 4:00 PM  
+To: Dexter Deeps; Charlie Carlson; Beatrice Baker; Edward Effingham  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Thanks for all your input, everyone. This discussion has been incredibly informative.
+
+Regarding the budget, I'll check with finance and get back to you all tomorrow. In the meantime, I think we should:
+
+1. Investigate query optimization (Dexter, can you lead this?)  
+2. Prepare a proposal for horizontal scaling (Charlie, could you draft this?)  
+3. Continue monitoring the slowdowns (Beatrice, please keep us updated)  
+4. Review our security measures in light of potential growth (Edward, can you handle this?)
+
+Let's reconvene in a few days to discuss our findings and next steps. Does Thursday at 2 PM work for everyone?
+
+Adam
+
+---
+
+From: Dexter Deeps  
+Sent: Wednesday, December 5, 2019 3:15 PM  
+To: Charlie Carlson; Beatrice Baker; Adam Appleby; Edward Effingham  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+I support the idea of horizontal scaling, but we should also consider optimizing our current setup first. Has anyone looked into query optimization on the database side?
+
+As for the budget, I haven't seen the final numbers yet. Adam, do you have any insights on this?
+
+Dexter
+
+---
+
+From: Charlie Carlson  
+Sent: Wednesday, December 4, 2019 2:30 PM  
+To: Beatrice Baker; Adam Appleby; Edward Effingham; Dexter Deeps  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Good point, Beatrice. Horizontal scaling could definitely help with those slowdowns. We could add another application server and adjust the load balancer accordingly.
+
+Adam, given the potential expansion you mentioned, should we start planning for this upgrade now?
+
+Also, does anyone know if the budget for server infrastructure has been finalized for next quarter?
+
+Charlie
+
+---
+
+From: Beatrice Baker  
+Sent: Wednesday, December 4, 2019 1:45 PM  
+To: Adam Appleby; Edward Effingham; Dexter Deeps; Charlie Carlson  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Sure, Adam. We've noticed periodic spikes in response time, particularly during peak hours (around 2-4 PM). It's not critical yet, but it's something we should address if we're planning for growth.
+
+Charlie, do you think we might need to consider horizontal scaling soon?
+
+Beatrice
+
+---
+
+From: Adam Appleby  
+Sent: Wednesday, December 4, 2019 1:03 PM  
+To: Edward Effingham; Dexter Deeps; Beatrice Baker; Charlie Carlson  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Thanks for all the information, team. This is really helpful.
+
+Edward, there's no specific audit planned, but I've heard rumors that we might be expanding the project soon. I wanted to make sure our current setup could handle potential growth.
+
+Beatrice, you mentioned slowdowns on the app server. Can you provide more details on that?
+
+Adam
+
+---
+
+From: Edward Effingham  
+Sent: Wednesday, December 3, 2019 12:15 PM  
+To: Dexter Deeps; Adam Appleby; Beatrice Baker; Charlie Carlson  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Hello everyone,
+
+I'd like to add that we recently implemented multi-factor authentication for all server access. This provides an additional layer of security.
+
+Also, Adam, are you aware of any upcoming audits or compliance checks we should be preparing for?
+
+Edward
+
+---
+
+From: Dexter Deeps  
+Sent: Wednesday, December 2, 2019 11:32 AM  
+To: Adam Appleby; Beatrice Baker; Charlie Carlson  
+CC: Edward Effingham  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Hi all,
+
+Jumping in here to address the security questions. Yes, we have a next-gen firewall in place. It's configured to monitor and filter all incoming and outgoing traffic. 
+
+As for backups, we're running daily incremental backups and weekly full backups. The backup data is stored both on-site and in a secure cloud location.
+
+Adam, is there a specific security concern you're addressing?
+
+Dexter
+
+---
+
+From: Adam Appleby  
+Sent: Wednesday, December 2, 2019 11:05 AM  
+To: Beatrice Baker; Charlie Carlson  
+CC: Dexter Deeps; Edward Effingham  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Thanks for the quick responses. I'm actually more interested in the security setup. Do we have a firewall in place? And what about our backup systems?
+
+Adam
+
+---
+
+From: Beatrice Baker  
+Sent: Wednesday, December 1, 2019 10:37 AM  
+To: Charlie Carlson; Adam Appleby  
+CC: Dexter Deeps; Edward Effingham  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Thanks for the overview, Charlie.
+
+Adam, are you asking about server capacity or performance issues? We've been monitoring some intermittent slowdowns on the app server lately.
+
+Beatrice
+
+---
+
+From: Charlie Carlson  
+Sent: Wednesday, December 1, 2019 10:03 AM  
+To: Adam Appleby  
+CC: Beatrice Baker; Dexter Deeps; Edward Effingham  
+Subject: Re: Florckgeek Project - Server Information Needed  
+
+Hey Adam,
+
+I can provide some details. We're currently running three main servers for Florckgeek:
+
+1. Application server
+2. Database server
+3. Load balancer
+
+The application server is handling most of the processing. We recently upgraded its RAM to 64GB. The database server is using PostgreSQL 16.
+
+What specific information are you looking for?
+
+Charlie
+
+---
+
+From: Adam Appleby  
+Sent: Wednesday, November 30, 2019 9:15 AM  
+To: Beatrice Baker; Charlie Carlson; Dexter Deeps; Edward Effingham  
+Subject: Florckgeek Project - Server Information Needed  
+
+Hi team,
+
+I'm looking for some information about the Florckgeek project's servers. Can someone fill me in on the current setup and any recent changes?
+
+Thanks,
+Adam
