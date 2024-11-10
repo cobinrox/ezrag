@@ -9,15 +9,18 @@ from packages.ragimpls.simpleretriever import SimpleRetriever
 #from packages.ragimpls.whooshretriever import WhooshRetriever
 from packages.ragimpls.tinyllmgenerator        import TinyLLmGenerator
 from packages.ragimpls.t5smallgenerator        import T5SmallGenerator
+from packages.ragimpls.t5smallgenerator        import T5BaseGenerator
 
 from packages.ragimpls.simplechunker  import Simple_Chunker
 from packages.ragabs.session          import Session
-# Start up should look similar to this:
-# python main_ai.py --retriever_name=Naive_ST_FAISS_Retriever --generator_name=TinyLLmGenerator 
-#                   --chunk_dist_scoring=EUCLIDIAN --tempAsStr=NONE --quantize=True --debug=True 
-#                   --docs_dir=docs/geography
 
 
+'''
+   ezrag
+   This is a program that implements a RAG mechansim.  Please see the README
+   file for details.
+
+'''
 
 #DEFAULT_QUESTION = "How many fingers does PJ have?"
 #DEFAULT_QUESTION = "Where does PJ live?"
@@ -51,6 +54,11 @@ def set_up_cmd_line_parser():
     g_parser.add_argument("--interactive" ,  type=lambda x: x.lower() == 'true', default=True, help="Keep program open after finishing and run interactively")
     g_parser.add_argument("--question"    ,  default=DEFAULT_QUESTION          , help="Question you want to ask")
 
+'''
+    Takes the sys args passed to the program (or updated to sys) and uses the
+    program's parser to generate flat g_args array.  WHen finished, the global
+    g_args variable will be set with the program's args.
+'''
 def parse_my_args():
     global g_parser
     global g_args
@@ -82,8 +90,11 @@ def parse_my_args():
     utils.printf("===== End Main Input Params ====")
     #return g_args   
 
+'''
+    Run a rag session
+'''
 def run_session():
-    # dumb, just to help with debugging/output of csv files
+    # set up session/config obj used by all of the pieces of the RAG
     sessionNumber = int(round(time.time() * 1000))
     session = Session()
     session.session_num = sessionNumber
@@ -107,7 +118,7 @@ def run_session():
         session.ses_docs_dir = docs_dir
 
 
-    # assume a simple chunker, for now
+    # Initialize the chunker (right now we only have one kind)
     #if session.ses_chunker_name == "Simple_Chunker":
     chunker = Simple_Chunker(session)
     #else:
@@ -118,11 +129,12 @@ def run_session():
     if( g_args.retriever_name == "Naive_ST_FAISS_Retriever"):
         #retriever = Naive_ST_FAISS_Retriever(docs_dir=docs_dir,chunk_size=g_args.chunk_size,search_engine_similarity_score_type=g_args.chunk_dist_scoring, flush=True)
         retriever = Naive_ST_FAISS_Retriever(session)
-    elif( g_args.retriever_name == "WhooshRetriever"):
-        pass
+    #elif( g_args.retriever_name == "WhooshRetriever"): NOT READY YET
+    #    pass
     elif( g_args.retriever_name == "SimpleRetriever"):
         retriever = SimpleRetriever(session)
     
+    # initialize the generator
     generator = None
     if( g_args.generator_name == "TinyLLmGenerator"):
         generator = TinyLLmGenerator(session)
@@ -130,11 +142,19 @@ def run_session():
         pass #generator = GPTJGenerator()
     elif (g_args.generator_name == "T5SmallGenerator"):
         generator = T5SmallGenerator(session)
+    elif (g_args.generator_name == "T5BaseGenerator"):
+        generator = T5BaseGenerator(session)
 
+    # the retriever relies on the chunker, so pass chunker to the retriever
     retriever.injectChunker(chunker)
     
+    # ask the retriever to do its job, returning to us the top chunks
+    # that it found
     top_doc_names,top_chunks = retriever.public_retrieve_documents(g_args.question)
 
+    # then turn around and ask the genertor to do its job, which is just to
+    # take the top chunks from the retriver, and the user's query, and see what
+    # comes out
     x = generator.public_generate_response(g_args.question,top_chunks)
     session.ses_end_time = int(round(time.time() * 1000))
     session.ses_answer = x
@@ -143,16 +163,18 @@ def run_session():
     utils.printf("================")
     utils.printf(f"Sources: {top_doc_names}")
     if(g_args.interactive):
+        # if we started in interactive mode, then print out a prompt to
+        # allow the user to rate how well they thought the answer was
         rating = utils.get_rating()
         session.ses_rating = rating
+    # and write out the session information and results to csv file
     session.write_to_csv()
  
 #
 #  START UP !
 #
 if __name__ == "__main__":
-    #global g_args
-    #parse_my_args()
+    # initialize parser
     set_up_cmd_line_parser()
     while True:
         parse_my_args() # we can loop, so reparse any changes that the user may
@@ -170,8 +192,9 @@ if __name__ == "__main__":
         if(new_args[0] == "x"):
             utils.printf("buh bye")
             sys.exit(0)
+        # after getting new user options, reset the system args
+        # and go back and loop again
         sys.argv = [sys.argv[0]] + new_args  # Replace command-line arguments
-        #g_args = g_parser.parse_args()
 
         
 

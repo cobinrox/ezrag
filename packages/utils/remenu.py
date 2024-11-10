@@ -103,7 +103,7 @@ if __name__ == "__main__":
     # Create the parser
     myparser = argparse.ArgumentParser(description="Example parser")
     myparser.add_argument("--retriever_name",     type=str, choices=['Naive_ST_FAISS_Retriever','giraffe','ostritch'], help="Set the retriver type")
-    myparser.add_argument("--generator_name",     type=str, choices=['T5SmallGenerator', 'TinyLLmGenerator']         , help="Set the generator type")
+    myparser.add_argument("--generator_name",     type=str, choices=['T5SmallGenerator', 'T5BaseGenerator', 'TinyLLmGenerator']         , help="Set the generator type")
     myparser.add_argument("--chunker_name",       type=str, default='simle')
     myparser.add_argument("--chunk_size",       type=str, default='512')
 

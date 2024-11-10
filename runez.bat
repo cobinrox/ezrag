@@ -1,4 +1,10 @@
 @echo off
+@REM
+@REM  This is just an easy-to-use cmd window menu that is useful to get started
+@REM  using the ezrag project.  It just prints out some options that are available and
+@REM  allows the user to pick which option they want to use and then pass those values
+@REM  of to the main_ai.py.
+@REM
 setlocal EnableDelayedExpansion
 
 REM Define default values for each option
@@ -15,7 +21,7 @@ set docs_dir=docs/security
 
 REM Define possible values for each option
 set retriever_name_choices=Naive_ST_FAISS_Retriever SimpleRetriever
-set generator_name_choices=T5SmallGenerator TinyLLmGenerator
+set generator_name_choices=T5SmallGenerator T5BaseGenerator TinyLLmGenerator
 set chunker_name_choices=Simple_Chunker
 set chunk_max_num_choices=1 5 6 7 10
 set chunker_size_choices=50 256 512 768 1024
@@ -37,7 +43,7 @@ echo.
 
 REM Display options with alignment
 call :display_option 1  retriever_name "     " !retriever_name! "  "  "[Naive_ST_FAISS_Retriever SimpleRetriever]"
-call :display_option 2  generator_name "     " !generator_name! "  " "[T5SmallGenerator TinyLLmGenerator]"
+call :display_option 2  generator_name "     " !generator_name! "  " "[T5SmallGenerator T5BaseGenerator TinyLLmGenerator]"
 call :display_option 3  chunker_name "       " !chunker_name! "  " "[Simple_Chunker]"
 call :display_option 4  chunk_max_num "      " !chunk_max_num! "  " "[1 5 6 7 10]"
 call :display_option 5  chunk_size "         " !chunk_size! "  " "[50 256 512 768 1024]"
