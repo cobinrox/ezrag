@@ -27,7 +27,7 @@ This is a python-based AI RAG research project.
 1. make sure you have Python, Miniconda, Poetry installed
 1. Run these from command line
    ```
-   git clone https://github.com/yourusername/ezrag.git
+   git clone git@github.com:cobinrox/ezrag.git
    cd ezrag
    conda create -n ezrag python=3.12
    conda activate ezrag
