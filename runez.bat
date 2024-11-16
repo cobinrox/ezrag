@@ -32,8 +32,8 @@ set quantize_choices=True False
 set debug_choices=True False
 
 REM Initialize question
-REM set question=What is PJ's wife's name?
-set question=What is original classification?
+set question=What is PJ's wife's name?
+REM set question=What is original classification?
 
 :menu
 cls
